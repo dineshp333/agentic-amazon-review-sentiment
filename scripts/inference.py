@@ -18,15 +18,15 @@ def initialize_model(
 ) -> SentimentAgent:
     """
     Initialize and load the sentiment model and vectorizers.
-    
+
     Args:
         model_path (str): Path to Keras model. Defaults to "models/model.keras".
         title_vectorizer_path (str): Path to title vectorizer. Defaults to "models/cv1.pkl".
         body_vectorizer_path (str): Path to body vectorizer. Defaults to "models/cv2.pkl".
-    
+
     Returns:
         SentimentAgent: Initialized sentiment agent with loaded models.
-    
+
     Raises:
         FileNotFoundError: If any model file is not found.
     """
@@ -44,7 +44,7 @@ def initialize_model(
 def get_model() -> SentimentAgent:
     """
     Get the global sentiment model instance, initializing if necessary.
-    
+
     Returns:
         SentimentAgent: Global sentiment agent instance.
     """
@@ -63,16 +63,16 @@ def run_inference(
 ) -> Dict[str, Any]:
     """
     Run sentiment inference on a single review.
-    
+
     Preprocesses the review text and returns sentiment prediction with confidence.
-    
+
     Args:
         title (str): Review title.
         body (str): Review body.
         remove_stopwords (bool): Whether to remove stopwords. Defaults to True.
         use_stemming (bool): Whether to apply stemming. Defaults to False.
         use_lemmatization (bool): Whether to apply lemmatization. Defaults to True.
-    
+
     Returns:
         Dict[str, Any]: Dictionary containing:
             - "label" (str): Sentiment label ("positive" or "negative")
@@ -81,7 +81,7 @@ def run_inference(
             - "body_features" (int): Number of features from body
             - "preprocessed_title" (str): Cleaned and processed title
             - "preprocessed_body" (str): Cleaned and processed body
-    
+
     Raises:
         ValueError: If title or body is empty or invalid.
     """
@@ -89,11 +89,11 @@ def run_inference(
     preprocessed_title, preprocessed_body = preprocess_review(
         title, body, remove_stopwords, use_stemming, use_lemmatization
     )
-    
+
     # Get model and run prediction
     sentiment_agent = get_model()
     prediction = sentiment_agent.predict(preprocessed_title, preprocessed_body)
-    
+
     # Add preprocessing info
     return {
         **prediction,
@@ -111,30 +111,32 @@ def run_batch_inference(
 ) -> List[Dict[str, Any]]:
     """
     Run sentiment inference on multiple reviews in batch.
-    
+
     Args:
         titles (List[str]): List of review titles.
         bodies (List[str]): List of review bodies.
         remove_stopwords (bool): Whether to remove stopwords. Defaults to True.
         use_stemming (bool): Whether to apply stemming. Defaults to False.
         use_lemmatization (bool): Whether to apply lemmatization. Defaults to True.
-    
+
     Returns:
         List[Dict[str, Any]]: List of sentiment predictions.
-    
+
     Raises:
         ValueError: If titles and bodies have different lengths.
     """
     if len(titles) != len(bodies):
         raise ValueError("titles and bodies must have the same length")
-    
+
     predictions = []
     for title, body in zip(titles, bodies):
         try:
-            pred = run_inference(title, body, remove_stopwords, use_stemming, use_lemmatization)
+            pred = run_inference(
+                title, body, remove_stopwords, use_stemming, use_lemmatization
+            )
             predictions.append(pred)
         except Exception as e:
             logger.error(f"Error processing review: {e}")
             predictions.append({"label": None, "score": None, "error": str(e)})
-    
+
     return predictions
