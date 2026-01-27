@@ -12,12 +12,8 @@ env/
 .vscode/
 .idea/
 
-# Data / artifacts
-*.pkl
-*.keras
-*.h5
-models/*.keras
-models/*.pkl
+# Data / artifacts (keep model files for deployment)
+# models/ folder is included for Streamlit Cloud deployment
 
 # OS / misc
 .DS_Store
@@ -25,5 +21,5 @@ Thumbs.db
 .env
 *.log
 
-# Streamlit
-.streamlit/
+# Streamlit cache (keep config.toml)
+.streamlit/cache/
