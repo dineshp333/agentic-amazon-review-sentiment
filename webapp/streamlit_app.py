@@ -11,6 +11,15 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+# Download NLTK data before importing anything else
+import nltk
+
+nltk.download("punkt", quiet=True)
+nltk.download("punkt_tab", quiet=True)
+nltk.download("stopwords", quiet=True)
+nltk.download("wordnet", quiet=True)
+nltk.download("omw-1.4", quiet=True)
+
 import streamlit as st
 from scripts.inference import run_inference
 from scripts.evaluate import print_evaluation_summary

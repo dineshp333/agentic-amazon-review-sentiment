@@ -11,17 +11,27 @@ import nltk
 try:
     nltk.data.find("tokenizers/punkt")
 except LookupError:
-    nltk.download("punkt")
+    nltk.download("punkt", quiet=True)
+
+try:
+    nltk.data.find("tokenizers/punkt_tab")
+except LookupError:
+    nltk.download("punkt_tab", quiet=True)
 
 try:
     nltk.data.find("corpora/stopwords")
 except LookupError:
-    nltk.download("stopwords")
+    nltk.download("stopwords", quiet=True)
 
 try:
     nltk.data.find("corpora/wordnet")
 except LookupError:
-    nltk.download("wordnet")
+    nltk.download("wordnet", quiet=True)
+
+try:
+    nltk.data.find("corpora/omw-1.4")
+except LookupError:
+    nltk.download("omw-1.4", quiet=True)
 
 
 def clean_text(
