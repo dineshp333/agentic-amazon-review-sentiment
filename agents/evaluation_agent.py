@@ -78,9 +78,15 @@ class EvaluationAgent:
 
         # Calculate metrics using scikit-learn
         accuracy = accuracy_score(ground_truth, predicted_labels)
-        precision = precision_score(ground_truth, predicted_labels, zero_division=0)
-        recall = recall_score(ground_truth, predicted_labels, zero_division=0)
-        f1 = f1_score(ground_truth, predicted_labels, zero_division=0)
+        precision = precision_score(
+            ground_truth, predicted_labels, average="weighted", zero_division=0
+        )
+        recall = recall_score(
+            ground_truth, predicted_labels, average="weighted", zero_division=0
+        )
+        f1 = f1_score(
+            ground_truth, predicted_labels, average="weighted", zero_division=0
+        )
 
         # Identify low-confidence predictions
         low_confidence = self._identify_low_confidence(predictions)
