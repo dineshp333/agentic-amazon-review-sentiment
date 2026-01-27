@@ -41,86 +41,306 @@ st.set_page_config(
 st.markdown(
     """
     <style>
+    /* Main background gradient */
     .main {
-        background-color: #f8f9fa;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-attachment: fixed;
     }
+    
+    /* Content container */
     .stApp {
-        max-width: 1000px;
+        max-width: 1200px;
         margin: 0 auto;
     }
+    
+    /* Hero section */
+    .hero-section {
+        background: linear-gradient(135deg, #FF9A56 0%, #FF6B95 50%, #A855F7 100%);
+        padding: 3rem 2rem;
+        border-radius: 20px;
+        text-align: center;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 1s ease-in;
+    }
+    
+    .hero-title {
+        color: white;
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        letter-spacing: -1px;
+    }
+    
+    .hero-subtitle {
+        color: rgba(255, 255, 255, 0.95);
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        font-weight: 400;
+    }
+    
+    .hero-description {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+    
+    /* Feature cards */
+    .feature-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        margin: 1rem 0;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    /* Sentiment results */
     .sentiment-positive {
-        color: #28a745;
-        font-weight: bold;
-        font-size: 24px;
+        color: #10B981;
+        font-weight: 900;
+        font-size: 2.5rem;
+        text-shadow: 2px 2px 4px rgba(16, 185, 129, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
+    
     .sentiment-negative {
-        color: #dc3545;
-        font-weight: bold;
-        font-size: 24px;
+        color: #EF4444;
+        font-weight: 900;
+        font-size: 2.5rem;
+        text-shadow: 2px 2px 4px rgba(239, 68, 68, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
-    .confidence-bar {
-        padding: 10px;
-        border-radius: 5px;
-        background-color: #e9ecef;
+    
+    /* Result card */
+    .result-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        color: white;
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    /* Stats badge */
+    .stats-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        display: inline-block;
+        margin: 0.5rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    /* Button styling */
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    
+    /* Input fields */
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea {
+        border-radius: 10px;
+        border: 2px solid #E5E7EB;
+        transition: border-color 0.3s ease;
+    }
+    
+    .stTextInput > div > div > input:focus,
+    .stTextArea > div > div > textarea:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# Title and description
-st.title("📊 Amazon Review Sentiment Analyzer")
+# Hero Section
 st.markdown(
     """
-    This tool uses AI agents to analyze Amazon product reviews and predict sentiment.
-    Enter a review title and body to get started!
-    """
+    <div class="hero-section">
+        <div class="hero-title">🌟 Amazon Review Sentiment Analyzer</div>
+        <div class="hero-subtitle">AI-Powered Review Analysis in Seconds</div>
+        <div class="hero-description">
+            Harness the power of advanced AI agents to instantly analyze customer reviews and predict sentiment with confidence. 
+            Built with state-of-the-art machine learning and natural language processing.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
+
+# Feature highlights
+st.markdown("### ✨ Why Use This Tool?")
+feat_col1, feat_col2, feat_col3, feat_col4 = st.columns(4)
+
+with feat_col1:
+    st.markdown(
+        """
+        <div class="feature-card">
+            <div style="font-size: 2.5rem; text-align: center;">🤖</div>
+            <h4 style="text-align: center; color: #667eea;">AI Agents</h4>
+            <p style="text-align: center; font-size: 0.9rem;">Specialized agents for cleaning, analyzing, and evaluating reviews</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+with feat_col2:
+    st.markdown(
+        """
+        <div class="feature-card">
+            <div style="font-size: 2.5rem; text-align: center;">⚡</div>
+            <h4 style="text-align: center; color: #667eea;">Lightning Fast</h4>
+            <p style="text-align: center; font-size: 0.9rem;">Get instant sentiment predictions in under 2 seconds</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+with feat_col3:
+    st.markdown(
+        """
+        <div class="feature-card">
+            <div style="font-size: 2.5rem; text-align: center;">🎯</div>
+            <h4 style="text-align: center; color: #667eea;">Highly Accurate</h4>
+            <p style="text-align: center; font-size: 0.9rem;">Trained on thousands of real Amazon reviews</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+with feat_col4:
+    st.markdown(
+        """
+        <div class="feature-card">
+            <div style="font-size: 2.5rem; text-align: center;">🔧</div>
+            <h4 style="text-align: center; color: #667eea;">Customizable</h4>
+            <p style="text-align: center; font-size: 0.9rem;">Adjust preprocessing options to fit your needs</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 # Sidebar with instructions
 with st.sidebar:
-    st.header("📝 Instructions")
     st.markdown(
         """
-        ### How to use:
-        1. **Enter Review Title**: A short headline for the review
-        2. **Enter Review Body**: The full review text
-        3. **Click "Analyze Review"**: The AI will process your input
-        4. **View Results**: See sentiment prediction and confidence score
-        
-        ### Sentiment Labels:
-        - **Positive** 😊: Review expresses satisfaction
-        - **Negative** 😞: Review expresses dissatisfaction
-        
-        ### Confidence Score:
-        - Higher score = more confident prediction
-        - Range: 0.0 to 1.0
-        - Scores above 0.7 are highly reliable
+        <div style="text-align: center; padding: 1rem 0;">
+            <h1 style="color: #667eea;">📊</h1>
+            <h3 style="color: #667eea; margin-top: -1rem;">Sentiment Analyzer</h3>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.divider()
+
+    st.markdown("### 🚀 Quick Start")
+    st.markdown(
+        """
+        <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); 
+                    padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+            <strong>Step 1:</strong> Enter your review details<br>
+            <strong>Step 2:</strong> Click "Analyze Review"<br>
+            <strong>Step 3:</strong> Get instant results!
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("### 📖 Understanding Results")
+
+    col_s1, col_s2 = st.columns(2)
+    with col_s1:
+        st.markdown("**😊 Positive**")
+        st.caption("Customer satisfaction")
+    with col_s2:
+        st.markdown("**😞 Negative**")
+        st.caption("Dissatisfaction")
+
+    st.markdown(
+        """
+        **Confidence Score:**  
+        • 0.9-1.0: Very confident  
+        • 0.7-0.9: Confident  
+        • 0.5-0.7: Moderate  
+        • Below 0.5: Low confidence
         """
     )
 
     st.divider()
 
-    st.header("⚙️ Settings")
+    st.markdown("### ⚙️ Advanced Settings")
 
     # Preprocessing options
-    st.subheader("Text Processing")
     remove_stopwords = st.checkbox(
-        "Remove stopwords (common words like 'the', 'a', 'is')",
+        "🔤 Remove stopwords",
         value=True,
-        help="Removing stopwords reduces noise in the text",
+        help="Remove common words like 'the', 'a', 'is'",
     )
 
     use_stemming = st.checkbox(
-        "Use stemming",
+        "✂️ Use stemming",
         value=False,
-        help="Stems words to their root form (e.g., 'running' → 'run')",
+        help="Convert words to root form (running → run)",
     )
 
     use_lemmatization = st.checkbox(
-        "Use lemmatization",
+        "📝 Use lemmatization",
         value=True,
-        help="Converts words to their base form (e.g., 'better' → 'good')",
+        help="Convert words to base form (better → good)",
+    )
+
+    st.divider()
+
+    st.markdown(
+        """
+        <div style="text-align: center; padding: 1rem; background: #f8f9fa; 
+                    border-radius: 10px; margin-top: 2rem;">
+            <p style="font-size: 0.85rem; color: #666; margin: 0;">
+                💡 <strong>Tip:</strong> Try different settings to see how preprocessing affects results!
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
 # Main content area
@@ -159,7 +379,7 @@ if submitted:
             st.subheader("📊 Analysis Results")
 
             try:
-                with st.spinner("🤖 Running sentiment analysis..."):
+                with st.spinner("🤖 Running AI sentiment analysis..."):
                     # Run inference with selected options
                     result = run_inference(
                         title=title,
@@ -169,78 +389,129 @@ if submitted:
                         use_lemmatization=use_lemmatization,
                     )
 
-                # Display results in a nice layout
-                # Sentiment prediction
+                # Display results in enhanced layout
                 sentiment = result.get("label", "unknown").upper()
                 confidence = result.get("score", 0.0)
 
-                # Color-coded sentiment display
+                # Create result card with gradient background
+                st.markdown(
+                    f"""
+                    <div class="result-card">
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <h2 style="color: white; margin: 0;">Sentiment Analysis Complete</h2>
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+                # Color-coded sentiment display with large icons
                 if sentiment == "POSITIVE":
                     st.markdown(
-                        f'<div class="sentiment-positive">✅ {sentiment}</div>',
+                        f"""
+                        <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); 
+                                    padding: 2rem; border-radius: 15px; text-align: center; margin: 1rem 0;">
+                            <div style="font-size: 4rem;">😊</div>
+                            <h1 style="color: white; font-size: 3rem; margin: 0.5rem 0;">POSITIVE</h1>
+                            <p style="color: rgba(255,255,255,0.9); font-size: 1.2rem;">This review expresses satisfaction</p>
+                        </div>
+                        """,
                         unsafe_allow_html=True,
                     )
                 else:
                     st.markdown(
-                        f'<div class="sentiment-negative">❌ {sentiment}</div>',
+                        f"""
+                        <div style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); 
+                                    padding: 2rem; border-radius: 15px; text-align: center; margin: 1rem 0;">
+                            <div style="font-size: 4rem;">😞</div>
+                            <h1 style="color: white; font-size: 3rem; margin: 0.5rem 0;">NEGATIVE</h1>
+                            <p style="color: rgba(255,255,255,0.9); font-size: 1.2rem;">This review expresses dissatisfaction</p>
+                        </div>
+                        """,
                         unsafe_allow_html=True,
                     )
 
-                # Confidence score with progress bar
-                st.markdown("**Confidence Score:**")
-                st.progress(min(confidence, 1.0), text=f"{confidence:.1%}")
+                # Confidence score with enhanced progress bar
+                st.markdown("### 🎯 Confidence Level")
+                confidence_percent = confidence * 100
+
+                # Determine confidence level
+                if confidence >= 0.9:
+                    conf_label = "🔥 Very High"
+                    conf_color = "#10B981"
+                elif confidence >= 0.7:
+                    conf_label = "✅ High"
+                    conf_color = "#3B82F6"
+                elif confidence >= 0.5:
+                    conf_label = "⚠️ Moderate"
+                    conf_color = "#F59E0B"
+                else:
+                    conf_label = "❓ Low"
+                    conf_color = "#EF4444"
+
+                st.markdown(
+                    f"""
+                    <div style="background: white; padding: 1.5rem; border-radius: 10px; 
+                                box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1rem 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 1.2rem; font-weight: 600;">{conf_label}</span>
+                            <span style="font-size: 1.5rem; font-weight: 700; color: {conf_color};">{confidence_percent:.1f}%</span>
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+                st.progress(min(confidence, 1.0))
 
                 # Additional details in expandable section
-                with st.expander("📋 Detailed Information"):
+                with st.expander("📋 View Detailed Analysis", expanded=False):
+                    st.markdown("#### Preprocessing Details")
+
                     col_detail1, col_detail2 = st.columns(2)
 
                     with col_detail1:
+                        st.markdown("**Processed Title:**")
+                        preprocessed_title = result.get("preprocessed_title", "N/A")
+                        st.code(preprocessed_title, language="text")
                         st.metric(
-                            "Prediction Confidence",
-                            f"{confidence:.4f}",
-                            help="Higher values indicate stronger confidence",
+                            "Title Features Extracted",
+                            result.get("title_features", 0),
                         )
 
                     with col_detail2:
+                        st.markdown("**Processed Body:**")
+                        preprocessed_body = result.get("preprocessed_body", "N/A")
+                        st.code(preprocessed_body, language="text")
                         st.metric(
-                            "Prediction Type",
-                            sentiment,
+                            "Body Features Extracted",
+                            result.get("body_features", 0),
                         )
 
                     st.divider()
 
-                    st.markdown("**Processed Text:**")
-                    col_proc1, col_proc2 = st.columns(2)
+                    st.markdown("#### Model Information")
+                    st.info(
+                        f"""
+                        **Prediction Confidence:** {confidence:.4f}  
+                        **Model Type:** Neural Network (Keras)  
+                        **Total Features:** {result.get("title_features", 0) + result.get("body_features", 0)}  
+                        **Processing Options:**  
+                        • Stopwords Removed: {"Yes" if remove_stopwords else "No"}  
+                        • Stemming: {"Yes" if use_stemming else "No"}  
+                        • Lemmatization: {"Yes" if use_lemmatization else "No"}
+                        """
+                    )
 
-                    with col_proc1:
-                        st.markdown("*Processed Title:*")
-                        preprocessed_title = result.get("preprocessed_title", "N/A")
-                        st.code(preprocessed_title, language="text")
-
-                    with col_proc2:
-                        st.markdown("*Processed Body:*")
-                        preprocessed_body = result.get("preprocessed_body", "N/A")
-                        st.code(preprocessed_body, language="text")
-
-                    st.markdown("**Features:**")
-                    col_feat1, col_feat2 = st.columns(2)
-
-                    with col_feat1:
-                        st.metric(
-                            "Title Features",
-                            result.get("title_features", 0),
-                            help="Number of features extracted from title",
-                        )
-
-                    with col_feat2:
-                        st.metric(
-                            "Body Features",
-                            result.get("body_features", 0),
-                            help="Number of features extracted from body",
-                        )
-
-                # Success message
-                st.success("✅ Analysis complete!")
+                # Success message with action
+                st.success("✅ Analysis completed successfully!")
+                st.markdown(
+                    """
+                    <div style="text-align: center; margin-top: 1.5rem;">
+                        <p>💡 <strong>Try another review</strong> or adjust settings in the sidebar!</p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
             except FileNotFoundError as e:
                 st.error(
@@ -257,84 +528,144 @@ if submitted:
                 logger.error(f"Error: {str(e)}")
 
 else:
-    # Default state - show welcome message
+    # Default state - show welcome message with attractive design
     with col2:
-        st.info(
-            "👈 Enter a review on the left and click **'Analyze Review'** to get started!"
+        st.markdown(
+            """
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                        padding: 3rem 2rem; border-radius: 20px; text-align: center; 
+                        color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">🚀</div>
+                <h2 style="margin: 1rem 0;">Ready to Analyze!</h2>
+                <p style="font-size: 1.1rem; opacity: 0.95; margin-bottom: 1.5rem;">
+                    Enter your review details on the left and click <strong>"Analyze Review"</strong> 
+                    to get instant AI-powered sentiment predictions.
+                </p>
+                <div style="background: rgba(255,255,255,0.2); padding: 1rem; 
+                            border-radius: 10px; backdrop-filter: blur(10px);">
+                    <p style="margin: 0; font-size: 0.95rem;">
+                        💡 <strong>Pro Tip:</strong> Try the example reviews below to see the analyzer in action!
+                    </p>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
 
-# Footer with examples
+# Footer with enhanced examples
 st.divider()
 
-st.subheader("📚 Example Reviews")
+st.markdown(
+    """
+    <div style="text-align: center; margin: 2rem 0;">
+        <h2 style="color: #667eea;">📚 Try These Example Reviews</h2>
+        <p style="color: #666; font-size: 1.1rem;">Copy and paste these examples to test the analyzer</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 col_ex1, col_ex2 = st.columns(2)
 
 with col_ex1:
-    st.markdown("**✅ Positive Example:**")
-    st.code(
+    st.markdown(
         """
-Title: Excellent Quality!
+        <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); 
+                    padding: 1.5rem; border-radius: 15px; margin-bottom: 1rem; 
+                    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);">
+            <h3 style="color: white; margin-top: 0;">😊 Positive Example</h3>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.code(
+        """Title: Excellent Quality!
+
 Body: This product exceeded my expectations. 
 The build quality is outstanding, it works 
-perfectly, and the customer service was amazing. 
-Highly recommended!
-        """,
+perfectly, and the customer service was 
+amazing. Delivery was fast and packaging 
+was secure. Highly recommended for anyone 
+looking for a reliable product!""",
         language="text",
     )
 
 with col_ex2:
-    st.markdown("**❌ Negative Example:**")
-    st.code(
+    st.markdown(
         """
-Title: Very Disappointing
-Body: Very disappointed with this purchase. 
-It broke after just one week. The quality 
-is poor and customer service was unhelpful. 
-Do not recommend.
+        <div style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); 
+                    padding: 1.5rem; border-radius: 15px; margin-bottom: 1rem; 
+                    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);">
+            <h3 style="color: white; margin-top: 0;">😞 Negative Example</h3>
+        </div>
         """,
+        unsafe_allow_html=True,
+    )
+    st.code(
+        """Title: Very Disappointing
+
+Body: Very disappointed with this purchase. 
+It broke after just one week of normal use. 
+The quality is poor and feels cheaply made. 
+Customer service was unhelpful when I tried 
+to get a refund. Save your money and look 
+elsewhere. Do not recommend.""",
         language="text",
     )
 
 st.divider()
 
+# Enhanced footer with better styling
 st.markdown(
     """
-    ### 🚀 How to Run Locally
-    
-    1. **Install dependencies:**
-       ```bash
-       pip install -r requirements.txt
-       ```
-    
-    2. **Run the Streamlit app:**
-       ```bash
-       streamlit run webapp/streamlit_app.py
-       ```
-    
-    3. **Access the app:**
-       Open your browser and go to `http://localhost:8501`
-    
-    ### 📦 Requirements
-    - Python 3.11+
-    - TensorFlow/Keras for model inference
-    - scikit-learn for text vectorization
-    - NLTK for text preprocessing
-    - Streamlit for the web interface
-    
-    ### 🔧 Notes
-    - The app requires pre-trained model files in the `models/` directory
-    - First run may download NLTK data for tokenization and lemmatization
-    - Batch processing is available via the inference module
-    """
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                padding: 2rem; border-radius: 20px; margin: 2rem 0; 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2); color: white;">
+        <h3 style="text-align: center; margin-top: 0;">🚀 About This Project</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+                    gap: 1.5rem; margin: 1.5rem 0;">
+            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; 
+                        border-radius: 10px; backdrop-filter: blur(10px);">
+                <h4>🤖 AI Agents</h4>
+                <p style="font-size: 0.9rem; opacity: 0.95;">
+                    Specialized agents for data preprocessing, sentiment prediction, 
+                    evaluation, and continuous improvement recommendations.
+                </p>
+            </div>
+            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; 
+                        border-radius: 10px; backdrop-filter: blur(10px);">
+                <h4>🧠 Machine Learning</h4>
+                <p style="font-size: 0.9rem; opacity: 0.95;">
+                    Powered by TensorFlow/Keras neural networks trained on real Amazon reviews 
+                    with advanced NLP preprocessing.
+                </p>
+            </div>
+            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; 
+                        border-radius: 10px; backdrop-filter: blur(10px);">
+                <h4>📊 Features</h4>
+                <p style="font-size: 0.9rem; opacity: 0.95;">
+                    Real-time analysis, confidence scoring, customizable preprocessing, 
+                    and detailed explanations for every prediction.
+                </p>
+            </div>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
 st.markdown(
     """
-    <hr>
-    <p style="text-align: center; color: #666;">
-    🔬 Agentic Amazon Review Sentiment Analysis | Built with Streamlit & Python
-    </p>
+    <div style="text-align: center; padding: 2rem; background: #f8f9fa; 
+                border-radius: 15px; margin: 1rem 0;">
+        <p style="color: #666; font-size: 0.95rem; margin: 0;">
+            🔬 <strong>Agentic Amazon Review Sentiment Analysis</strong><br>
+            Built with ❤️ using Streamlit, Python, TensorFlow, and NLTK<br>
+            <span style="font-size: 0.85rem; opacity: 0.8;">
+                © 2026 | AI-Powered Sentiment Analysis Platform
+            </span>
+        </p>
+    </div>
     """,
     unsafe_allow_html=True,
 )
