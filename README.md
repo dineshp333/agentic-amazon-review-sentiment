@@ -2,6 +2,12 @@
 
 A modular, production-ready Python application that uses AI agents to analyze Amazon product reviews and predict sentiment (positive/negative). Built with a clean architecture, comprehensive type hints, and designed to demonstrate core AI engineering skills.
 
+## 🚀 Live Demo
+
+**Try the app now:** [https://agentic-amazon-review-sentiment-2llhu4jyed2jvdduooq8yn.streamlit.app/](https://agentic-amazon-review-sentiment-2llhu4jyed2jvdduooq8yn.streamlit.app/)
+
+Analyze Amazon reviews instantly with AI-powered sentiment detection!
+
 ## 🎯 Project Overview
 
 This project implements an **agentic workflow** for sentiment analysis using specialized Python agents that work together:
