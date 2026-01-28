@@ -241,88 +241,10 @@ st.markdown(
         border-color: #667eea;
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
-    
-    /* Modal overlay */
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.75);
-        z-index: 1000;
-    }
     </style>
     """,
     unsafe_allow_html=True,
 )
-
-# Initialize session state for user info modal
-if "user_info_submitted" not in st.session_state:
-    st.session_state.user_info_submitted = False
-if "modal_user_name" not in st.session_state:
-    st.session_state.modal_user_name = ""
-if "modal_user_age" not in st.session_state:
-    st.session_state.modal_user_age = 25
-
-# User Info Modal Popup - Show if not submitted
-if not st.session_state.user_info_submitted:
-    # Overlay background
-    st.markdown(
-        """
-        <div class="modal-overlay"></div>
-        """,
-        unsafe_allow_html=True,
-    )
-    
-    # Center the modal
-    col_left, col_modal, col_right = st.columns([1, 2, 1])
-    
-    with col_modal:
-        st.markdown(
-            """
-            <div style="background: white; border-radius: 25px; padding: 3rem; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);">
-                <div style="text-align: center;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
-                    <h1 style="color: #667eea; margin: 0.5rem 0; font-size: 2rem;">Welcome!</h1>
-                    <p style="color: #666; font-size: 1.1rem; margin: 1rem 0 2rem 0;">Please tell us about yourself before analyzing reviews</p>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        
-        # User info form
-        modal_name = st.text_input(
-            "Your Name",
-            placeholder="Enter your full name",
-            key="modal_name_input",
-        )
-        
-        modal_age = st.number_input(
-            "Your Age",
-            min_value=13,
-            max_value=120,
-            value=25,
-            key="modal_age_input",
-        )
-        
-        col_btn1, col_btn2, col_btn3 = st.columns([0.5, 1, 0.5])
-        with col_btn2:
-            if st.button("Continue to Analysis", use_container_width=True, key="modal_submit_btn", type="primary"):
-                if modal_name and modal_name.strip() != "":
-                    st.session_state.user_info_submitted = True
-                    st.session_state.modal_user_name = modal_name.strip()
-                    st.session_state.modal_user_age = modal_age
-                    st.rerun()
-                else:
-                    st.error("Please enter your name to continue")
-    
-    st.stop()
-
-# Get user info from session state
-user_name = st.session_state.modal_user_name
-user_age = st.session_state.modal_user_age
 
 # Hero Section
 st.markdown(
@@ -407,17 +329,25 @@ with st.sidebar:
 
     st.divider()
 
-    st.markdown("### 👤 User Information")
-    st.markdown(f"**Name:** {user_name}")
-    st.markdown(f"**Age:** {user_age}")
+    st.markdown("### � User Information")
     
-    if st.button("🔄 Change User", help="Change name and age"):
-        st.session_state.user_info_submitted = False
-        st.rerun()
+    user_name = st.text_input(
+        "Your Name",
+        placeholder="e.g., John Doe",
+        help="Please enter your name",
+    )
+    
+    user_age = st.number_input(
+        "Your Age",
+        min_value=13,
+        max_value=120,
+        value=25,
+        help="Please enter your age (13+)",
+    )
 
     st.divider()
 
-    st.markdown("### 🚀 Quick Start")
+    st.markdown("### �🚀 Quick Start")
     st.markdown(
         """
         <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); 
@@ -528,8 +458,10 @@ with col1:
 
 # Process form submission
 if submitted:
-    # Validate inputs
-    if not title.strip() or not body.strip():
+    # Validate user information
+    if not user_name or user_name.strip() == "":
+        st.error("❌ Please enter your name before analyzing.")
+    elif not title.strip() or not body.strip():
         st.error("❌ Please enter both a title and body for the review.")
     else:
         with col2:
