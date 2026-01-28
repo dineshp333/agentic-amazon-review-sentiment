@@ -24,10 +24,34 @@ import streamlit as st
 from scripts.inference import run_inference
 from scripts.evaluate import print_evaluation_summary
 import logging
+import csv
+from datetime import datetime
+from pathlib import Path
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Create data folder for storing user responses
+DATA_FOLDER = Path(__file__).parent.parent / "user_data"
+DATA_FOLDER.mkdir(exist_ok=True)
+DATA_FILE = DATA_FOLDER / "analysis_results.csv"
+
+# Initialize CSV file if it doesn't exist
+if not DATA_FILE.exists():
+    with open(DATA_FILE, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(
+            [
+                "Timestamp",
+                "Name",
+                "Age",
+                "Review Title",
+                "Review Body",
+                "Sentiment",
+                "Confidence",
+            ]
+        )
 
 # Page configuration
 st.set_page_config(
@@ -305,7 +329,25 @@ with st.sidebar:
 
     st.divider()
 
-    st.markdown("### 🚀 Quick Start")
+    st.markdown("### � User Information")
+    
+    user_name = st.text_input(
+        "Your Name",
+        placeholder="e.g., John Doe",
+        help="Please enter your name",
+    )
+    
+    user_age = st.number_input(
+        "Your Age",
+        min_value=13,
+        max_value=120,
+        value=25,
+        help="Please enter your age (13+)",
+    )
+
+    st.divider()
+
+    st.markdown("### �🚀 Quick Start")
     st.markdown(
         """
         <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); 
@@ -375,6 +417,19 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
+# Function to save analysis results
+def save_analysis_result(name, age, title, body, sentiment, confidence):
+    """Save analysis result to CSV file"""
+    try:
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        with open(DATA_FILE, 'a', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow([timestamp, name, age, title, body, sentiment, confidence])
+        return True
+    except Exception as e:
+        logger.error(f"Error saving analysis result: {e}")
+        return False
+
 # Main content area
 col1, col2 = st.columns([1, 1], gap="large")
 
@@ -403,8 +458,10 @@ with col1:
 
 # Process form submission
 if submitted:
-    # Validate inputs
-    if not title.strip() or not body.strip():
+    # Validate user information
+    if not user_name or user_name.strip() == "":
+        st.error("❌ Please enter your name before analyzing.")
+    elif not title.strip() or not body.strip():
         st.error("❌ Please enter both a title and body for the review.")
     else:
         with col2:
@@ -582,6 +639,22 @@ if submitted:
 
                 # Success message with action
                 st.success("✅ Analysis completed successfully!")
+                
+                # Save the analysis result to CSV
+                save_success = save_analysis_result(
+                    user_name.strip(),
+                    user_age,
+                    title,
+                    body,
+                    sentiment,
+                    confidence
+                )
+                
+                if save_success:
+                    st.info(f"📁 Data saved successfully! Thank you for your feedback, {user_name}!", icon="ℹ️")
+                else:
+                    st.warning("⚠️ Analysis complete but failed to save data.", icon="⚠️")
+                
                 st.markdown(
                     """
                     <div style="text-align: center; margin-top: 1.5rem;">
