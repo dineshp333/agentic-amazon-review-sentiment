@@ -442,29 +442,26 @@ if submitted:
                     # Trigger green glow animation with full-screen overlay
                     st.markdown(
                         """
+                        <div id="glow-overlay" class="fullscreen-glow-overlay glow-positive-overlay"></div>
                         <script>
                             (function() {
+                                var overlay = document.getElementById('glow-overlay');
                                 var body = window.parent.document.body;
-                                
-                                // Remove any existing overlay
                                 var existingOverlay = window.parent.document.getElementById('sentiment-glow-overlay');
-                                if (existingOverlay) {
-                                    existingOverlay.remove();
+                                
+                                if (!existingOverlay) {
+                                    existingOverlay = window.parent.document.createElement('div');
+                                    existingOverlay.id = 'sentiment-glow-overlay';
+                                    existingOverlay.className = 'fullscreen-glow-overlay';
+                                    body.appendChild(existingOverlay);
                                 }
                                 
-                                // Create new overlay
-                                var overlay = window.parent.document.createElement('div');
-                                overlay.id = 'sentiment-glow-overlay';
-                                overlay.className = 'fullscreen-glow-overlay glow-positive-overlay';
-                                overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 9999;';
-                                body.appendChild(overlay);
+                                existingOverlay.className = 'fullscreen-glow-overlay glow-positive-overlay';
+                                existingOverlay.style.display = 'block';
                                 
-                                // Remove overlay after animation completes
                                 setTimeout(function() {
-                                    if (overlay && overlay.parentNode) {
-                                        overlay.remove();
-                                    }
-                                }, 3100);
+                                    existingOverlay.style.display = 'none';
+                                }, 3000);
                             })();
                         </script>
                         <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); 
@@ -480,29 +477,26 @@ if submitted:
                     # Trigger red glow animation with full-screen overlay
                     st.markdown(
                         """
+                        <div id="glow-overlay" class="fullscreen-glow-overlay glow-negative-overlay"></div>
                         <script>
                             (function() {
+                                var overlay = document.getElementById('glow-overlay');
                                 var body = window.parent.document.body;
-                                
-                                // Remove any existing overlay
                                 var existingOverlay = window.parent.document.getElementById('sentiment-glow-overlay');
-                                if (existingOverlay) {
-                                    existingOverlay.remove();
+                                
+                                if (!existingOverlay) {
+                                    existingOverlay = window.parent.document.createElement('div');
+                                    existingOverlay.id = 'sentiment-glow-overlay';
+                                    existingOverlay.className = 'fullscreen-glow-overlay';
+                                    body.appendChild(existingOverlay);
                                 }
                                 
-                                // Create new overlay
-                                var overlay = window.parent.document.createElement('div');
-                                overlay.id = 'sentiment-glow-overlay';
-                                overlay.className = 'fullscreen-glow-overlay glow-negative-overlay';
-                                overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 9999;';
-                                body.appendChild(overlay);
+                                existingOverlay.className = 'fullscreen-glow-overlay glow-negative-overlay';
+                                existingOverlay.style.display = 'block';
                                 
-                                // Remove overlay after animation completes
                                 setTimeout(function() {
-                                    if (overlay && overlay.parentNode) {
-                                        overlay.remove();
-                                    }
-                                }, 3100);
+                                    existingOverlay.style.display = 'none';
+                                }, 3000);
                             })();
                         </script>
                         <div style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); 
