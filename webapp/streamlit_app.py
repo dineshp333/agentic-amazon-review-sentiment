@@ -155,6 +155,38 @@ st.markdown(
         to { opacity: 1; transform: translateX(0); }
     }
     
+    /* Full-screen glowing overlay animations */
+    @keyframes glowGreenOverlay {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 0.4; }
+    }
+    
+    @keyframes glowRedOverlay {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 0.4; }
+    }
+    
+    .fullscreen-glow-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 9999;
+        transition: opacity 0.3s;
+    }
+    
+    .glow-positive-overlay {
+        background: radial-gradient(circle, #10B981 0%, #059669 100%);
+        animation: glowGreenOverlay 1s ease-in-out 3;
+    }
+    
+    .glow-negative-overlay {
+        background: radial-gradient(circle, #EF4444 0%, #DC2626 100%);
+        animation: glowRedOverlay 1s ease-in-out 3;
+    }
+    
     /* Button styling */
     .stButton > button {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -407,8 +439,31 @@ if submitted:
 
                 # Color-coded sentiment display with large icons
                 if sentiment == "POSITIVE":
+                    # Trigger green glow animation with full-screen overlay
                     st.markdown(
-                        f"""
+                        """
+                        <div id="glow-overlay" class="fullscreen-glow-overlay glow-positive-overlay"></div>
+                        <script>
+                            (function() {
+                                var overlay = document.getElementById('glow-overlay');
+                                var body = window.parent.document.body;
+                                var existingOverlay = window.parent.document.getElementById('sentiment-glow-overlay');
+                                
+                                if (!existingOverlay) {
+                                    existingOverlay = window.parent.document.createElement('div');
+                                    existingOverlay.id = 'sentiment-glow-overlay';
+                                    existingOverlay.className = 'fullscreen-glow-overlay';
+                                    body.appendChild(existingOverlay);
+                                }
+                                
+                                existingOverlay.className = 'fullscreen-glow-overlay glow-positive-overlay';
+                                existingOverlay.style.display = 'block';
+                                
+                                setTimeout(function() {
+                                    existingOverlay.style.display = 'none';
+                                }, 3000);
+                            })();
+                        </script>
                         <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); 
                                     padding: 2rem; border-radius: 15px; text-align: center; margin: 1rem 0;">
                             <div style="font-size: 4rem;">😊</div>
@@ -419,8 +474,31 @@ if submitted:
                         unsafe_allow_html=True,
                     )
                 else:
+                    # Trigger red glow animation with full-screen overlay
                     st.markdown(
-                        f"""
+                        """
+                        <div id="glow-overlay" class="fullscreen-glow-overlay glow-negative-overlay"></div>
+                        <script>
+                            (function() {
+                                var overlay = document.getElementById('glow-overlay');
+                                var body = window.parent.document.body;
+                                var existingOverlay = window.parent.document.getElementById('sentiment-glow-overlay');
+                                
+                                if (!existingOverlay) {
+                                    existingOverlay = window.parent.document.createElement('div');
+                                    existingOverlay.id = 'sentiment-glow-overlay';
+                                    existingOverlay.className = 'fullscreen-glow-overlay';
+                                    body.appendChild(existingOverlay);
+                                }
+                                
+                                existingOverlay.className = 'fullscreen-glow-overlay glow-negative-overlay';
+                                existingOverlay.style.display = 'block';
+                                
+                                setTimeout(function() {
+                                    existingOverlay.style.display = 'none';
+                                }, 3000);
+                            })();
+                        </script>
                         <div style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); 
                                     padding: 2rem; border-radius: 15px; text-align: center; margin: 1rem 0;">
                             <div style="font-size: 4rem;">😞</div>
