@@ -250,6 +250,11 @@ st.markdown(
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.75);
+        z-index: 999;
+        pointer-events: none;
+    }
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.75);
         z-index: 1000;
     }
     </style>
@@ -275,8 +280,10 @@ if not st.session_state.user_info_submitted:
         unsafe_allow_html=True,
     )
     
-    # Center the modal
-    col_left, col_modal, col_right = st.columns([1, 2, 1])
+    st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
+    
+    # Center the modal with proper spacing
+    col_left, col_modal, col_right = st.columns([0.5, 1.5, 0.5], gap="large")
     
     with col_modal:
         st.markdown(
