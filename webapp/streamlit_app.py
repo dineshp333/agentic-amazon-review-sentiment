@@ -571,29 +571,33 @@ if submitted:
 
                 # Color-coded sentiment display with large icons
                 if sentiment == "POSITIVE":
-                    # Trigger green glow animation with full-screen overlay
+                    # Full-screen glow effect - 3 blinks then disappear
                     st.markdown(
                         """
-                        <div id="glow-overlay" class="fullscreen-glow-overlay glow-positive-overlay"></div>
                         <script>
                             (function() {
-                                var overlay = document.getElementById('glow-overlay');
                                 var body = window.parent.document.body;
                                 var existingOverlay = window.parent.document.getElementById('sentiment-glow-overlay');
                                 
-                                if (!existingOverlay) {
-                                    existingOverlay = window.parent.document.createElement('div');
-                                    existingOverlay.id = 'sentiment-glow-overlay';
-                                    existingOverlay.className = 'fullscreen-glow-overlay';
-                                    body.appendChild(existingOverlay);
+                                if (existingOverlay) {
+                                    existingOverlay.remove();
                                 }
                                 
-                                existingOverlay.className = 'fullscreen-glow-overlay glow-positive-overlay';
-                                existingOverlay.style.display = 'block';
+                                var overlay = window.parent.document.createElement('div');
+                                overlay.id = 'sentiment-glow-overlay';
+                                overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #10B981 0%, #059669 100%); z-index: 9999; pointer-events: none; opacity: 0;';
+                                body.appendChild(overlay);
                                 
-                                setTimeout(function() {
-                                    existingOverlay.style.display = 'none';
-                                }, 3000);
+                                var blinkCount = 0;
+                                var blinkInterval = setInterval(function() {
+                                    if (blinkCount < 6) {
+                                        overlay.style.opacity = blinkCount % 2 === 0 ? '0.4' : '0';
+                                        blinkCount++;
+                                    } else {
+                                        clearInterval(blinkInterval);
+                                        overlay.remove();
+                                    }
+                                }, 500);
                             })();
                         </script>
                         <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); 
@@ -606,29 +610,33 @@ if submitted:
                         unsafe_allow_html=True,
                     )
                 else:
-                    # Trigger red glow animation with full-screen overlay
+                    # Full-screen glow effect - 3 blinks then disappear
                     st.markdown(
                         """
-                        <div id="glow-overlay" class="fullscreen-glow-overlay glow-negative-overlay"></div>
                         <script>
                             (function() {
-                                var overlay = document.getElementById('glow-overlay');
                                 var body = window.parent.document.body;
                                 var existingOverlay = window.parent.document.getElementById('sentiment-glow-overlay');
                                 
-                                if (!existingOverlay) {
-                                    existingOverlay = window.parent.document.createElement('div');
-                                    existingOverlay.id = 'sentiment-glow-overlay';
-                                    existingOverlay.className = 'fullscreen-glow-overlay';
-                                    body.appendChild(existingOverlay);
+                                if (existingOverlay) {
+                                    existingOverlay.remove();
                                 }
                                 
-                                existingOverlay.className = 'fullscreen-glow-overlay glow-negative-overlay';
-                                existingOverlay.style.display = 'block';
+                                var overlay = window.parent.document.createElement('div');
+                                overlay.id = 'sentiment-glow-overlay';
+                                overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #EF4444 0%, #DC2626 100%); z-index: 9999; pointer-events: none; opacity: 0;';
+                                body.appendChild(overlay);
                                 
-                                setTimeout(function() {
-                                    existingOverlay.style.display = 'none';
-                                }, 3000);
+                                var blinkCount = 0;
+                                var blinkInterval = setInterval(function() {
+                                    if (blinkCount < 6) {
+                                        overlay.style.opacity = blinkCount % 2 === 0 ? '0.4' : '0';
+                                        blinkCount++;
+                                    } else {
+                                        clearInterval(blinkInterval);
+                                        overlay.remove();
+                                    }
+                                }, 500);
                             })();
                         </script>
                         <div style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); 
@@ -726,18 +734,23 @@ if submitted:
                 )
                 
                 if save_success:
-                    st.info(f"📁 Data saved successfully! Thank you for your feedback, {user_name}!", icon="ℹ️")
+                    st.success(f"📁 Data saved successfully! Thank you for your feedback, {user_name}!")
                 else:
-                    st.warning("⚠️ Analysis complete but failed to save data.", icon="⚠️")
+                    st.warning("⚠️ Analysis complete but failed to save data.")
                 
                 st.markdown(
                     """
-                    <div style="text-align: center; margin-top: 1.5rem;">
-                        <p>💡 <strong>Try another review</strong> or adjust settings in the sidebar!</p>
+                    <div style="text-align: center; margin-top: 1.5rem; padding: 1rem; background: #fff3cd; border-radius: 10px;">
+                        <p style="color: #856404; margin: 0;">⏱️ <strong>Page will reset in 10 seconds...</strong></p>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
+                
+                # Auto-reset after 10 seconds
+                import time
+                time.sleep(10)
+                st.rerun()
 
             except FileNotFoundError as e:
                 st.error(
