@@ -292,7 +292,7 @@ st.markdown(
 if "user_name" not in st.session_state:
     st.session_state.user_name = "User"
 if "user_profession" not in st.session_state:
-    st.session_state.user_profession = "Prefer not to say"
+    st.session_state.user_profession = "Profession"
 
 # Get user info from session state
 user_name = st.session_state.user_name
