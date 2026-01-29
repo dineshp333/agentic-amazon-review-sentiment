@@ -1,6 +1,6 @@
 # 📊 Agentic Amazon Review Sentiment Analysis
 
-A modular, production-ready Python application that uses AI agents to analyze Amazon product reviews and predict sentiment (positive/negative). Built with a clean architecture, comprehensive type hints, and designed to demonstrate core AI engineering skills.
+A modular, production-ready Python application that uses AI agents to analyze Amazon product reviews and predict sentiment (positive/negative). Built with a clean architecture, comprehensive type hints, **balanced dataset training**, and designed to demonstrate core AI engineering skills.
 
 ## 🚀 Live Demo
 
@@ -13,7 +13,7 @@ Analyze Amazon reviews instantly with AI-powered sentiment detection!
 This project implements an **agentic workflow** for sentiment analysis using specialized Python agents that work together:
 
 - **DataAgent**: Cleans and preprocesses review text
-- **SentimentAgent**: Predicts sentiment using a pre-trained Keras model
+- **SentimentAgent**: Predicts sentiment using a pre-trained Keras model (91.5% accuracy)
 - **EvaluationAgent**: Calculates performance metrics and identifies low-confidence predictions
 - **ImprovementAgent**: Generates recommendations for model improvements
 
@@ -25,6 +25,7 @@ The application includes a **Streamlit web interface** for interactive sentiment
 ✅ **Production-Ready**: Error handling, logging, and validation  
 ✅ **Scalable**: Supports batch processing and multiple workflows  
 ✅ **Laptop-Safe**: Minimal dependencies, efficient resource usage  
+✅ **Balanced Training**: SMOTE-based dataset balancing for accurate predictions  
 
 ---
 
@@ -40,9 +41,10 @@ The application includes a **Streamlit web interface** for interactive sentiment
 - Input validation
 
 #### SentimentAgent
-- Loads pre-trained Keras sentiment model
+- Loads pre-trained Keras sentiment model (91.5% accuracy)
 - Vectorizes text using scikit-learn CountVectorizers
 - Returns predictions with confidence scores
+- Trained on balanced dataset (SMOTE)
 - Batch inference capability
 
 #### EvaluationAgent
@@ -57,7 +59,15 @@ The application includes a **Streamlit web interface** for interactive sentiment
 - Severity-based prioritization
 - JSON report generation
 
-### 2. **Utility Scripts**
+### 2. **Model Training Features**
+
+- **Dataset Balancing**: SMOTE (Synthetic Minority Over-sampling Technique)
+- **Performance Metrics**: 91.5% accuracy, 91.0% precision, 92.2% recall
+- **Jupyter Notebook**: Complete training pipeline in `models/model.ipynb`
+- **Visualization**: Training history and confusion matrix plots
+- **Model Persistence**: Saves trained model and vectorizers
+
+### 3. **Utility Scripts**
 
 | Script | Purpose |
 |--------|---------|
@@ -65,29 +75,32 @@ The application includes a **Streamlit web interface** for interactive sentiment
 | `scripts/inference.py` | Model loading and prediction interface |
 | `scripts/evaluate.py` | Metrics calculation and CSV export |
 
-### 3. **Streamlit Web Application**
+### 4. **Streamlit Web Application**
 
 - Interactive review input (title + body)
 - Real-time sentiment prediction with confidence scores
 - Configurable text preprocessing options
+- No blocking modals - direct access to analyzer
 - Detailed results with processed text visualization
 - Example reviews for testing
 - Responsive, professional UI with color-coded results
+- Data persistence for analysis tracking
 
-### 4. **Comprehensive Testing & Documentation**
+### 5. **Comprehensive Testing & Documentation**
 
 - Unit tests for all agents
 - Sample review data (CSV)
 - Architecture documentation
 - AI engineer skill mapping
 - Setup instructions
+- Test coverage reporting
 
 ---
 
 ## 📦 Installation
 
 ### Prerequisites
-- **Python 3.11+** (tested on 3.11 and 3.12)
+- **Python 3.11+** (tested on 3.11, 3.12, and 3.13)
 - **pip** (Python package manager)
 - **Virtual environment** (recommended)
 
@@ -120,6 +133,10 @@ This installs:
 - **pandas** - Data handling
 - **joblib** - Model serialization
 - **pytest** - Testing framework
+- **imbalanced-learn** - SMOTE dataset balancing
+- **seaborn** - Visualization
+- **matplotlib** - Plotting
+- **pytest-cov** - Test coverage reporting
 
 ### Step 4: Download NLTK Data (One-time Setup)
 ```bash
@@ -401,6 +418,83 @@ See [LICENSE](LICENSE) for details.
 
 ---
 
+## 🔬 Model Retraining
+
+The current model achieves **91.5% accuracy** on balanced test data. To retrain with your own data:
+
+### Using the Training Notebook
+
+1. **Open the Jupyter Notebook:**
+```bash
+jupyter notebook models/model.ipynb
+```
+
+2. **Follow the pipeline:**
+   - Load Amazon reviews CSV
+   - Clean and deduplicate data
+   - Extract text features (CountVectorizer)
+   - **Balance dataset with SMOTE** (fixes class imbalance)
+   - Train neural network (128-64-32-1 architecture)
+   - Evaluate with confusion matrix
+   - Save model and vectorizers
+
+### Key Training Features
+
+- **Dataset Balancing**: SMOTE creates synthetic samples to achieve 50/50 class distribution
+- **Feature Extraction**: 1,100 features (100 from title, 1,000 from body)
+- **Architecture**: Sequential model with dropout layers to prevent overfitting
+- **Training**: 20 epochs with 20% validation split
+- **Metrics**: Accuracy, precision, recall, F1-score, confusion matrix
+
+### Model Performance (Balanced Dataset)
+
+```
+Accuracy:  91.54%
+Precision: 91.02%
+Recall:    92.16%
+F1-Score:  91.59%
+
+Confusion Matrix:
+[[4131  413]
+ [ 356 4187]]
+```
+
+**Before balancing**: Model was biased toward positive predictions (82% of training data was positive)  
+**After balancing**: Balanced precision and recall across both classes
+
+### Artifacts Generated
+
+- `models/model.keras` - Trained Keras model
+- `models/cv1.pkl` - Title text vectorizer
+- `models/cv2.pkl` - Body text vectorizer
+
+---
+
+## 🧪 Testing
+
+Run all tests with coverage:
+
+```bash
+# Run tests
+pytest tests/
+
+# With coverage report
+pytest --cov=agents --cov=scripts tests/
+
+# Generate HTML coverage report
+pytest --cov=agents --cov=scripts --cov-report=html tests/
+# View at: htmlcov/index.html
+```
+
+### Test Files
+
+- `tests/test_agents.py` - Unit tests for all four agents
+- `tests/test_integration.py` - End-to-end workflow tests
+- `tests/test_streamlit_app.py` - UI component tests
+- `tests/sample_reviews.csv` - Sample data for testing
+
+---
+
 ## 🆘 Troubleshooting
 
 ### Issue: "Model files not found"
@@ -408,6 +502,15 @@ See [LICENSE](LICENSE) for details.
 - `models/model.keras`
 - `models/cv1.pkl`
 - `models/cv2.pkl`
+
+If missing, retrain the model using `models/model.ipynb`.
+
+### Issue: "Wrong sentiment predictions"
+**Cause:** Model might be trained on imbalanced data or threshold needs adjustment.  
+**Solution:** 
+1. Retrain model with balanced dataset (see Model Retraining section)
+2. Check prediction threshold in [agents/sentiment_agent.py](agents/sentiment_agent.py)
+3. Current threshold: `label = "positive" if raw_score > 0.5 else "negative"`
 
 ### Issue: "NLTK data not found"
 **Solution:** Download NLTK data:
@@ -429,6 +532,16 @@ venv\Scripts\activate  # Windows
 source venv/bin/activate  # macOS/Linux
 ```
 
+### Issue: "NaN values in review_headline"
+**Solution:** Data cleaning handles this automatically. If you see errors, ensure `fillna('')` is applied before vectorization in the training notebook.
+
+### Issue: Tests failing
+**Solution:** 
+1. Ensure all dependencies installed: `pip install -r requirements.txt`
+2. Download NLTK data as shown above
+3. Check model files exist in `models/` directory
+4. Run tests with verbose output: `pytest -v tests/`
+
 ---
 
 ## 📧 Support & Questions
@@ -444,6 +557,8 @@ For issues, questions, or suggestions, please refer to the documentation in the 
 | Install deps | `pip install -r requirements.txt` |
 | Launch web app | `streamlit run webapp/streamlit_app.py` |
 | Run tests | `pytest tests/` |
+| Run tests with coverage | `pytest --cov=agents --cov=scripts tests/` |
+| Retrain model | Open `models/model.ipynb` in Jupyter |
 | Download NLTK data | `python -c "import nltk; nltk.download('all')"` |
 | Check Python version | `python --version` |
 | Activate venv | `venv\Scripts\activate` (Windows) |
