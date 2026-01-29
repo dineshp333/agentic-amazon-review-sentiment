@@ -119,6 +119,7 @@ class SentimentAgent:
         raw_score = self.model.predict(combined_features, verbose=0)[0][0]
 
         # Convert to label and confidence
+        # Model output: higher score (close to 1) = positive, lower score (close to 0) = negative
         confidence = float(raw_score) if raw_score >= 0.5 else float(1 - raw_score)
         label = "positive" if raw_score >= 0.5 else "negative"
 
