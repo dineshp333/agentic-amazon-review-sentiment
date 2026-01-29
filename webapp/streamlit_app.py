@@ -279,12 +279,12 @@ if not st.session_state.user_info_submitted:
         """,
         unsafe_allow_html=True,
     )
-    
+
     st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
-    
+
     # Center the modal with proper spacing
     col_left, col_modal, col_right = st.columns([0.5, 1.5, 0.5], gap="large")
-    
+
     with col_modal:
         st.markdown(
             """
@@ -298,14 +298,14 @@ if not st.session_state.user_info_submitted:
             """,
             unsafe_allow_html=True,
         )
-        
+
         # User info form
         modal_name = st.text_input(
             "Your Name",
             placeholder="Enter your full name",
             key="modal_name_input",
         )
-        
+
         modal_age = st.number_input(
             "Your Age",
             min_value=13,
@@ -313,10 +313,15 @@ if not st.session_state.user_info_submitted:
             value=25,
             key="modal_age_input",
         )
-        
+
         col_btn1, col_btn2, col_btn3 = st.columns([0.5, 1, 0.5])
         with col_btn2:
-            if st.button("Continue to Analysis", use_container_width=True, key="modal_submit_btn", type="primary"):
+            if st.button(
+                "Continue to Analysis",
+                use_container_width=True,
+                key="modal_submit_btn",
+                type="primary",
+            ):
                 if modal_name and modal_name.strip() != "":
                     st.session_state.user_info_submitted = True
                     st.session_state.modal_user_name = modal_name.strip()
@@ -324,7 +329,7 @@ if not st.session_state.user_info_submitted:
                     st.rerun()
                 else:
                     st.error("Please enter your name to continue")
-    
+
     st.stop()
 
 # Get user info from session state
@@ -417,7 +422,7 @@ with st.sidebar:
     st.markdown("### 👤 User Information")
     st.markdown(f"**Name:** {user_name}")
     st.markdown(f"**Age:** {user_age}")
-    
+
     if st.button("🔄 Change User", help="Change name and age"):
         st.session_state.user_info_submitted = False
         st.rerun()
@@ -494,18 +499,20 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
+
 # Function to save analysis results
 def save_analysis_result(name, age, title, body, sentiment, confidence):
     """Save analysis result to CSV file"""
     try:
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        with open(DATA_FILE, 'a', newline='', encoding='utf-8') as f:
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        with open(DATA_FILE, "a", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow([timestamp, name, age, title, body, sentiment, confidence])
         return True
     except Exception as e:
         logger.error(f"Error saving analysis result: {e}")
         return False
+
 
 # Main content area
 col1, col2 = st.columns([1, 1], gap="large")
@@ -720,24 +727,23 @@ if submitted:
                         """
                     )
 
-                # Success message with action
-                st.success("✅ Analysis completed successfully!")
-                
                 # Save the analysis result to CSV
                 save_success = save_analysis_result(
-                    user_name.strip(),
-                    user_age,
-                    title,
-                    body,
-                    sentiment,
-                    confidence
+                    user_name.strip(), user_age, title, body, sentiment, confidence
                 )
-                
+
                 if save_success:
-                    st.success(f"📁 Data saved successfully! Thank you for your feedback, {user_name}!")
+                    st.success(
+                        f"📁 Data saved successfully! Thank you for your feedback, {user_name}!"
+                    )
+
+                    # Show reset message without auto-rerun
+                    st.info(
+                        "💡 Ready to analyze another review? Scroll up to enter a new one."
+                    )
                 else:
                     st.warning("⚠️ Analysis complete but failed to save data.")
-                
+
                 st.markdown(
                     """
                     <div style="text-align: center; margin-top: 1.5rem; padding: 1rem; background: #fff3cd; border-radius: 10px;">
@@ -746,9 +752,10 @@ if submitted:
                     """,
                     unsafe_allow_html=True,
                 )
-                
+
                 # Auto-reset after 10 seconds
                 import time
+
                 time.sleep(10)
                 st.rerun()
 
