@@ -11,11 +11,11 @@ import csv
 from datetime import datetime
 import nltk
 
+# Add parent directory to path for imports BEFORE importing scripts
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import streamlit as st
 from scripts.inference import run_inference
-
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Download NLTK data
 nltk.download("punkt", quiet=True)
