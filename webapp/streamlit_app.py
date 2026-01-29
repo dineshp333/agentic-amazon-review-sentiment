@@ -28,6 +28,40 @@ nltk.download("omw-1.4", quiet=True)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+# Security functions
+def sanitize_csv_field(field: str) -> str:
+    """Sanitize CSV field to prevent injection attacks."""
+    if not isinstance(field, str):
+        field = str(field)
+
+    # Remove leading characters that could trigger formulas in spreadsheet applications
+    dangerous_chars = ["=", "+", "-", "@", "\t", "\r"]
+    if field and field[0] in dangerous_chars:
+        field = "'" + field  # Prefix with single quote to neutralize
+
+    # Limit length to prevent DoS attacks
+    max_length = 10000
+    if len(field) > max_length:
+        field = field[:max_length]
+
+    return field
+
+
+def validate_input_length(
+    text: str, field_name: str = "input", max_length: int = 10000
+) -> str:
+    """Validate and limit input text length."""
+    if not text:
+        return text
+    if len(text) > max_length:
+        logger.warning(
+            f"{field_name} exceeded max length, truncating from {len(text)} to {max_length}"
+        )
+        return text[:max_length]
+    return text
+
+
 # Create data folder for storing user responses
 DATA_FOLDER = Path(__file__).parent.parent / "user_data"
 DATA_FOLDER.mkdir(exist_ok=True)
@@ -430,17 +464,33 @@ with st.sidebar:
 
 # Function to save analysis results
 def save_analysis_result(name, profession, title, body, sentiment, confidence):
-    """Save analysis result to CSV file"""
+    """Save analysis result to CSV file with proper sanitization."""
     try:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # Sanitize all fields to prevent CSV injection
+        safe_name = sanitize_csv_field(name)
+        safe_profession = sanitize_csv_field(profession)
+        safe_title = sanitize_csv_field(title)
+        safe_body = sanitize_csv_field(body)
+        safe_sentiment = sanitize_csv_field(sentiment)
+
         with open(DATA_FILE, "a", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
+            writer = csv.writer(f, quoting=csv.QUOTE_ALL)  # Quote all fields for safety
             writer.writerow(
-                [timestamp, name, profession, title, body, sentiment, confidence]
+                [
+                    timestamp,
+                    safe_name,
+                    safe_profession,
+                    safe_title,
+                    safe_body,
+                    safe_sentiment,
+                    confidence,
+                ]
             )
         return True
     except Exception as e:
-        logger.error(f"Error saving analysis result: {e}")
+        logger.error(f"Error saving analysis result: [sanitized]")
         return False
 
 
@@ -504,6 +554,10 @@ if submitted:
     if not title.strip() or not body.strip():
         st.error("❌ Please enter both a title and body for the review.")
     else:
+        # Validate input lengths for security
+        title = validate_input_length(title, "title", max_length=500)
+        body = validate_input_length(body, "body", max_length=10000)
+
         with col2:
             st.subheader("📊 Analysis Results")
 
@@ -536,36 +590,19 @@ if submitted:
 
                 # Color-coded sentiment display with large icons
                 if sentiment == "POSITIVE":
-                    # Full-screen glow effect - 3 blinks then disappear
+                    # Display positive sentiment result with CSS animation (no JavaScript)
                     st.markdown(
                         """
-                        <script>
-                            (function() {
-                                var body = window.parent.document.body;
-                                var existingOverlay = window.parent.document.getElementById('sentiment-glow-overlay');
-                                
-                                if (existingOverlay) {
-                                    existingOverlay.remove();
-                                }
-                                
-                                var overlay = window.parent.document.createElement('div');
-                                overlay.id = 'sentiment-glow-overlay';
-                                overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #10B981 0%, #059669 100%); z-index: 9999; pointer-events: none; opacity: 0;';
-                                body.appendChild(overlay);
-                                
-                                var blinkCount = 0;
-                                var blinkInterval = setInterval(function() {
-                                    if (blinkCount < 6) {
-                                        overlay.style.opacity = blinkCount % 2 === 0 ? '0.4' : '0';
-                                        blinkCount++;
-                                    } else {
-                                        clearInterval(blinkInterval);
-                                        overlay.remove();
-                                    }
-                                }, 500);
-                            })();
-                        </script>
-                        <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); 
+                        <style>
+                            @keyframes pulseGreen {
+                                0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+                                50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.8); }
+                            }
+                            .positive-result {
+                                animation: pulseGreen 1s ease-in-out 3;
+                            }
+                        </style>
+                        <div class="positive-result" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); 
                                     padding: 2rem; border-radius: 15px; text-align: center; margin: 1rem 0;">
                             <div style="font-size: 4rem;">😊</div>
                             <h1 style="color: white; font-size: 3rem; margin: 0.5rem 0;">POSITIVE</h1>
@@ -575,36 +612,19 @@ if submitted:
                         unsafe_allow_html=True,
                     )
                 else:
-                    # Full-screen glow effect - 3 blinks then disappear
+                    # Display negative sentiment result with CSS animation (no JavaScript)
                     st.markdown(
                         """
-                        <script>
-                            (function() {
-                                var body = window.parent.document.body;
-                                var existingOverlay = window.parent.document.getElementById('sentiment-glow-overlay');
-                                
-                                if (existingOverlay) {
-                                    existingOverlay.remove();
-                                }
-                                
-                                var overlay = window.parent.document.createElement('div');
-                                overlay.id = 'sentiment-glow-overlay';
-                                overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #EF4444 0%, #DC2626 100%); z-index: 9999; pointer-events: none; opacity: 0;';
-                                body.appendChild(overlay);
-                                
-                                var blinkCount = 0;
-                                var blinkInterval = setInterval(function() {
-                                    if (blinkCount < 6) {
-                                        overlay.style.opacity = blinkCount % 2 === 0 ? '0.4' : '0';
-                                        blinkCount++;
-                                    } else {
-                                        clearInterval(blinkInterval);
-                                        overlay.remove();
-                                    }
-                                }, 500);
-                            })();
-                        </script>
-                        <div style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); 
+                        <style>
+                            @keyframes pulseRed {
+                                0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+                                50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.8); }
+                            }
+                            .negative-result {
+                                animation: pulseRed 1s ease-in-out 3;
+                            }
+                        </style>
+                        <div class="negative-result" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); 
                                     padding: 2rem; border-radius: 15px; text-align: center; margin: 1rem 0;">
                             <div style="font-size: 4rem;">😞</div>
                             <h1 style="color: white; font-size: 3rem; margin: 0.5rem 0;">NEGATIVE</h1>
@@ -687,7 +707,10 @@ if submitted:
 
                 # Save the analysis result to CSV
                 # Use form inputs if provided, otherwise fall back to session state defaults
+                # Validate and limit name length
                 final_name = user_name_input.strip() if user_name_input else user_name
+                final_name = validate_input_length(final_name, "name", max_length=100)
+
                 final_profession = (
                     user_profession_input if user_profession_input else user_profession
                 )

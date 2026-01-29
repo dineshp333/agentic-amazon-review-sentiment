@@ -1,10 +1,42 @@
 """SentimentAgent runs sentiment prediction using pre-trained Keras model and CountVectorizers."""
 
 import os
+from pathlib import Path
 from typing import Dict, Any
 import numpy as np
 import joblib
 from tensorflow import keras
+
+
+def validate_model_path(path: str, base_dir: str = None) -> str:
+    """
+    Validate model path to prevent directory traversal attacks.
+
+    Args:
+        path: Path to validate
+        base_dir: Base directory (defaults to project root)
+
+    Returns:
+        str: Validated absolute path
+
+    Raises:
+        ValueError: If path is outside allowed directory
+    """
+    if base_dir is None:
+        # Get project root directory (2 levels up from agents/)
+        base_dir = Path(__file__).parent.parent.resolve()
+    else:
+        base_dir = Path(base_dir).resolve()
+
+    safe_path = Path(path).resolve()
+
+    # Ensure path is within project directory
+    try:
+        safe_path.relative_to(base_dir)
+    except ValueError:
+        raise ValueError(f"Invalid model path: {path} is outside project directory")
+
+    return str(safe_path)
 
 
 class SentimentAgent:
@@ -49,28 +81,37 @@ class SentimentAgent:
         """
         Load the pretrained Keras model and CountVectorizers from disk.
 
+        Security: Validates all paths to prevent directory traversal attacks.
+        Note: pickle/joblib deserialization is inherently risky. Only load trusted models.
+
         Raises:
             FileNotFoundError: If any model or vectorizer file is not found.
+            ValueError: If paths are invalid or outside project directory.
             Exception: If loading fails due to file corruption or format issues.
         """
+        # Validate all paths before loading
+        validated_model_path = validate_model_path(self.model_path)
+        validated_title_vec_path = validate_model_path(self.title_vectorizer_path)
+        validated_body_vec_path = validate_model_path(self.body_vectorizer_path)
+
         # Load Keras model
-        if not os.path.exists(self.model_path):
-            raise FileNotFoundError(f"Model not found at {self.model_path}")
-        self.model = keras.models.load_model(self.model_path)
+        if not os.path.exists(validated_model_path):
+            raise FileNotFoundError(f"Model not found at {validated_model_path}")
+        self.model = keras.models.load_model(validated_model_path)
 
-        # Load title CountVectorizer
-        if not os.path.exists(self.title_vectorizer_path):
+        # Load title CountVectorizer (WARNING: Pickle deserialization risk)
+        if not os.path.exists(validated_title_vec_path):
             raise FileNotFoundError(
-                f"Title vectorizer not found at {self.title_vectorizer_path}"
+                f"Title vectorizer not found at {validated_title_vec_path}"
             )
-        self.title_vectorizer = joblib.load(self.title_vectorizer_path)
+        self.title_vectorizer = joblib.load(validated_title_vec_path)
 
-        # Load body CountVectorizer
-        if not os.path.exists(self.body_vectorizer_path):
+        # Load body CountVectorizer (WARNING: Pickle deserialization risk)
+        if not os.path.exists(validated_body_vec_path):
             raise FileNotFoundError(
-                f"Body vectorizer not found at {self.body_vectorizer_path}"
+                f"Body vectorizer not found at {validated_body_vec_path}"
             )
-        self.body_vectorizer = joblib.load(self.body_vectorizer_path)
+        self.body_vectorizer = joblib.load(validated_body_vec_path)
 
     def predict(self, title: str, body: str) -> Dict[str, Any]:
         """
