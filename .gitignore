@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+*.pyc
 
 # Virtual environments
 .venv/
@@ -12,8 +13,17 @@ env/
 .vscode/
 .idea/
 
+# Testing / Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+coverage.xml
+
 # Data / artifacts (keep model files for deployment)
 # models/ folder is included for Streamlit Cloud deployment
+
+# User data (temporary analysis results)
+user_data/*.csv
 
 # OS / misc
 .DS_Store
@@ -23,3 +33,9 @@ Thumbs.db
 
 # Streamlit cache (keep config.toml)
 .streamlit/cache/
+
+# Backup files
+*_old.py
+*.bak
+*.swp
+*~
