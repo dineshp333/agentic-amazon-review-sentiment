@@ -41,7 +41,7 @@ if not DATA_FILE.exists():
             [
                 "Timestamp",
                 "Name",
-                "Age",
+                "Profession",
                 "Review Title",
                 "Review Body",
                 "Sentiment",
@@ -257,12 +257,12 @@ st.markdown(
 # Initialize session state for user tracking
 if "user_name" not in st.session_state:
     st.session_state.user_name = "User"
-if "user_age" not in st.session_state:
-    st.session_state.user_age = 25
+if "user_profession" not in st.session_state:
+    st.session_state.user_profession = "Prefer not to say"
 
 # Get user info from session state
 user_name = st.session_state.user_name
-user_age = st.session_state.user_age
+user_profession = st.session_state.user_profession
 
 # Hero Section
 st.markdown(
@@ -349,9 +349,9 @@ with st.sidebar:
 
     st.markdown("### 👤 User Information")
     st.markdown(f"**Name:** {user_name}")
-    st.markdown(f"**Age:** {user_age}")
+    st.markdown(f"**Profession:** {user_profession}")
 
-    if st.button("🔄 Change User", help="Change name and age"):
+    if st.button("🔄 Change User", help="Change name and profession"):
         st.session_state.user_info_submitted = False
         st.rerun()
 
@@ -429,13 +429,15 @@ with st.sidebar:
 
 
 # Function to save analysis results
-def save_analysis_result(name, age, title, body, sentiment, confidence):
+def save_analysis_result(name, profession, title, body, sentiment, confidence):
     """Save analysis result to CSV file"""
     try:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         with open(DATA_FILE, "a", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow([timestamp, name, age, title, body, sentiment, confidence])
+            writer.writerow(
+                [timestamp, name, profession, title, body, sentiment, confidence]
+            )
         return True
     except Exception as e:
         logger.error(f"Error saving analysis result: {e}")
@@ -452,7 +454,7 @@ with col1:
     with st.form("review_form", border=True):
         # Optional user information
         st.markdown("##### 👤 Personal Information (Optional)")
-        col_name, col_age = st.columns([2, 1])
+        col_name, col_profession = st.columns([2, 2])
         with col_name:
             user_name_input = st.text_input(
                 "Name",
@@ -460,14 +462,18 @@ with col1:
                 help="Optional: Your name for record keeping",
                 label_visibility="collapsed",
             )
-        with col_age:
-            user_age_input = st.number_input(
-                "Age",
-                min_value=13,
-                max_value=120,
-                value=None,
-                placeholder="Age",
-                help="Optional: Your age",
+        with col_profession:
+            user_profession_input = st.selectbox(
+                "Profession",
+                options=[
+                    "Prefer not to say",
+                    "Student",
+                    "Working Professional",
+                    "Business Owner",
+                    "Freelancer",
+                    "Retired",
+                ],
+                help="Optional: Your professional status",
                 label_visibility="collapsed",
             )
 
@@ -682,10 +688,12 @@ if submitted:
                 # Save the analysis result to CSV
                 # Use form inputs if provided, otherwise fall back to session state defaults
                 final_name = user_name_input.strip() if user_name_input else user_name
-                final_age = user_age_input if user_age_input is not None else user_age
+                final_profession = (
+                    user_profession_input if user_profession_input else user_profession
+                )
 
                 save_success = save_analysis_result(
-                    final_name, final_age, title, body, sentiment, confidence
+                    final_name, final_profession, title, body, sentiment, confidence
                 )
 
                 if save_success:
