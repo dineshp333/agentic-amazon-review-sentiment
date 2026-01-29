@@ -450,6 +450,30 @@ with col1:
 
     # Review input form
     with st.form("review_form", border=True):
+        # Optional user information
+        st.markdown("##### 👤 Personal Information (Optional)")
+        col_name, col_age = st.columns([2, 1])
+        with col_name:
+            user_name_input = st.text_input(
+                "Name",
+                placeholder="Enter your name (optional)",
+                help="Optional: Your name for record keeping",
+                label_visibility="collapsed",
+            )
+        with col_age:
+            user_age_input = st.number_input(
+                "Age",
+                min_value=13,
+                max_value=120,
+                value=None,
+                placeholder="Age",
+                help="Optional: Your age",
+                label_visibility="collapsed",
+            )
+
+        st.markdown("---")
+        st.markdown("##### 📝 Review Details")
+
         title = st.text_input(
             "Review Title",
             placeholder="e.g., Great quality product",
@@ -656,13 +680,17 @@ if submitted:
                     )
 
                 # Save the analysis result to CSV
+                # Use form inputs if provided, otherwise fall back to session state defaults
+                final_name = user_name_input.strip() if user_name_input else user_name
+                final_age = user_age_input if user_age_input is not None else user_age
+
                 save_success = save_analysis_result(
-                    user_name.strip(), user_age, title, body, sentiment, confidence
+                    final_name, final_age, title, body, sentiment, confidence
                 )
 
                 if save_success:
                     st.success(
-                        f"📁 Data saved successfully! Thank you for your feedback, {user_name}!"
+                        f"📁 Data saved successfully! Thank you for your feedback, {final_name}!"
                     )
 
                     # Show info message
