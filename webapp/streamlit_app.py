@@ -254,79 +254,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Initialize session state for user info modal
-if "user_info_submitted" not in st.session_state:
-    st.session_state.user_info_submitted = False
-if "modal_user_name" not in st.session_state:
-    st.session_state.modal_user_name = ""
-if "modal_user_age" not in st.session_state:
-    st.session_state.modal_user_age = 25
-
-# User Info Modal Popup - Show if not submitted
-if not st.session_state.user_info_submitted:
-    # Overlay background
-    st.markdown(
-        """
-        <div class="modal-overlay"></div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
-
-    # Center the modal with proper spacing
-    col_left, col_modal, col_right = st.columns([0.5, 1.5, 0.5], gap="large")
-
-    with col_modal:
-        st.markdown(
-            """
-            <div style="background: white; border-radius: 25px; padding: 3rem; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);">
-                <div style="text-align: center;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
-                    <h1 style="color: #667eea; margin: 0.5rem 0; font-size: 2rem;">Welcome!</h1>
-                    <p style="color: #666; font-size: 1.1rem; margin: 1rem 0 2rem 0;">Please tell us about yourself before analyzing reviews</p>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        # User info form
-        modal_name = st.text_input(
-            "Your Name",
-            placeholder="Enter your full name",
-            key="modal_name_input",
-        )
-
-        modal_age = st.number_input(
-            "Your Age",
-            min_value=13,
-            max_value=120,
-            value=25,
-            key="modal_age_input",
-        )
-
-        col_btn1, col_btn2, col_btn3 = st.columns([0.5, 1, 0.5])
-        with col_btn2:
-            if st.button(
-                "Continue to Analysis",
-                use_container_width=True,
-                key="modal_submit_btn",
-                type="primary",
-            ):
-                if modal_name and modal_name.strip() != "":
-                    st.session_state.user_info_submitted = True
-                    st.session_state.modal_user_name = modal_name.strip()
-                    st.session_state.modal_user_age = modal_age
-                    st.rerun()
-                else:
-                    st.error("Please enter your name to continue")
-
-    st.stop()
+# Initialize session state for user tracking
+if "user_name" not in st.session_state:
+    st.session_state.user_name = "User"
+if "user_age" not in st.session_state:
+    st.session_state.user_age = 25
 
 # Get user info from session state
-user_name = st.session_state.modal_user_name
-user_age = st.session_state.modal_user_age
+user_name = st.session_state.user_name
+user_age = st.session_state.user_age
 
 # Hero Section
 st.markdown(
