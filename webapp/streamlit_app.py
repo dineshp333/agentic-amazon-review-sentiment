@@ -245,13 +245,9 @@ st.markdown(
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.75);
+        background-color: rgba(255, 255, 255, 0.95);
         z-index: 999;
         pointer-events: none;
-    }
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.75);
-        z-index: 1000;
     }
     </style>
     """,
