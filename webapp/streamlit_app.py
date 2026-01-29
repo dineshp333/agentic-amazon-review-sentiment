@@ -5,28 +5,24 @@ Run with: streamlit run streamlit_app.py
 """
 
 import sys
-import os
 from pathlib import Path
+import logging
+import csv
+from datetime import datetime
+import nltk
+
+import streamlit as st
+from scripts.inference import run_inference
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-# Download NLTK data before importing anything else
-import nltk
-
+# Download NLTK data
 nltk.download("punkt", quiet=True)
 nltk.download("punkt_tab", quiet=True)
 nltk.download("stopwords", quiet=True)
 nltk.download("wordnet", quiet=True)
 nltk.download("omw-1.4", quiet=True)
-
-import streamlit as st
-from scripts.inference import run_inference
-from scripts.evaluate import print_evaluation_summary
-import logging
-import csv
-from datetime import datetime
-from pathlib import Path
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -566,7 +562,7 @@ if submitted:
 
                 # Create result card with gradient background
                 st.markdown(
-                    f"""
+                    """
                     <div class="result-card">
                         <div style="text-align: center; margin-bottom: 1.5rem;">
                             <h2 style="color: white; margin: 0;">Sentiment Analysis Complete</h2>
@@ -737,27 +733,12 @@ if submitted:
                         f"📁 Data saved successfully! Thank you for your feedback, {user_name}!"
                     )
 
-                    # Show reset message without auto-rerun
+                    # Show info message
                     st.info(
-                        "💡 Ready to analyze another review? Scroll up to enter a new one."
+                        "💡 Ready to analyze another review? Refresh the page or scroll up to enter a new one."
                     )
                 else:
                     st.warning("⚠️ Analysis complete but failed to save data.")
-
-                st.markdown(
-                    """
-                    <div style="text-align: center; margin-top: 1.5rem; padding: 1rem; background: #fff3cd; border-radius: 10px;">
-                        <p style="color: #856404; margin: 0;">⏱️ <strong>Page will reset in 10 seconds...</strong></p>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-
-                # Auto-reset after 10 seconds
-                import time
-
-                time.sleep(10)
-                st.rerun()
 
             except FileNotFoundError as e:
                 st.error(
